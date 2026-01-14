@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hospital Management System - Login</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+    font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+    background:#E0F4FB;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+.container{
+    background:#FFFFFF;
+    border-radius:20px;
+    box-shadow:0 20px 60px rgba(14,165,233,0.25);
+    overflow:hidden;
+    max-width:450px;
+    width:100%;
+}
+
+.header{
+    background:linear-gradient(135deg,#38BDF8 0%,#0EA5E9 100%);
+    padding:30px;
+    text-align:center;
+    color:#FFFFFF;
+}
+
+.header h1{font-size:28px;margin-bottom:5px;}
+.header p{font-size:14px;opacity:.9;}
+
+.tabs{
+    display:flex;
+    background:#F8FEFF;
+}
+
+.tab{
+    flex:1;
+    padding:15px;
+    text-align:center;
+    cursor:pointer;
+    border:none;
+    background:transparent;
+    font-size:16px;
+    font-weight:600;
+    color:#475569;
+    transition:.3s;
+}
+
+.tab.active{
+    background:#FFFFFF;
+    color:#0EA5E9;
+}
+
+.form-container{padding:30px;}
+
+.form-group{margin-bottom:20px;}
+
+label{
+    display:block;
+    margin-bottom:8px;
+    color:#0F172A;
+    font-weight:500;
+    font-size:14px;
+}
+
+input,select{
+    width:100%;
+    padding:12px 15px;
+    border:2px solid #A5E4F3;
+    border-radius:8px;
+    font-size:14px;
+    transition:.3s;
+    background:#FFFFFF;
+    color:#0F172A;
+}
+
+input:focus,select:focus{
+    outline:none;
+    border-color:#22D3EE;
+}
+
+button[type="submit"]{
+    width:100%;
+    padding:15px;
+    background:#0EA5E9;
+    color:#FFFFFF;
+    border:none;
+    border-radius:8px;
+    font-size:16px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.3s;
+}
+
+button[type="submit"]:hover{
+    background:#0284C7;
+    transform:translateY(-2px);
+}
+
+.message{
+    padding:12px;
+    border-radius:8px;
+    margin-bottom:20px;
+    display:none;
+    font-size:14px;
+}
+
+.message.success{
+    background:#D1FAE5;
+    color:#065F46;
+    border:1px solid #10B981;
+}
+
+.message.error{
+    background:#FEE2E2;
+    color:#991B1B;
+    border:1px solid #DC2626;
+}
+
+.hidden{display:none;}
+
+.password-toggle{position:relative;}
+.password-toggle input{padding-right:45px;}
+
+.toggle-btn{
+    position:absolute;
+    right:12px;
+    top:50%;
+    transform:translateY(-50%);
+    background:none;
+    border:none;
+    cursor:pointer;
+    font-size:12px;
+    color:#06B6D4;
+    font-weight:600;
+}
+</style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>🏥 Hospital Management</h1>
+            <p>Secure Healthcare Portal</p>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showLogin()">Login</button>
+            <button class="tab" onclick="showRegister()">Register</button>
+        </div>
+        
+        <!-- Login Form -->
+        <div id="loginForm" class="form-container">
+            <div id="loginMessage" class="message"></div>
+            
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                
+                <div class="form-group password-toggle">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required>
+                    <button type="button" class="toggle-btn" onclick="togglePassword('loginPassword')">Show</button>
+                </div>
+                
+                <button type="submit">Login</button>
+            </form>
+        </div>
+        
+        <!-- Register Form -->
+        <div id="registerForm" class="form-container hidden">
+            <div id="registerMessage" class="message"></div>
+            
+            <form onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label for="registerName">Full Name</label>
+                    <input type="text" id="registerName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="registerPhone">Phone Number</label>
+                    <input 
+    type="tel" 
+    id="registerPhone"
+    inputmode="numeric"
+    pattern="[0-9]{10}"
+    maxlength="10"
+    oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);"
+    placeholder=""
+>
+
+                </div>
+                
+                <div class="form-group password-toggle">
+                    <label for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" required minlength="6">
+                    <button type="button" class="toggle-btn" onclick="togglePassword('registerPassword')">Show</button>
+                </div>
+                
+                <select id="registerRole" required>
+    <option value="patient">Patient</option>
+</select>
+
+                
+                <button type="submit">Create Account</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Add this script to your HTML files to debug connection issues
+// Put this at the very top of your <script> section
+
+console.log('🔍 Starting connection diagnostics...');
+
+const API_URL = 'http://localhost:5000/api';
+
+// Test 1: Check if API is reachable
+async function testConnection() {
+    console.log('📡 Testing API connection to:', API_URL);
+    
+    try {
+        const response = await fetch(`${API_URL}/test`);
+        const data = await response.json();
+        console.log('✅ API Connection: SUCCESS');
+        console.log('Response:', data);
+        return true;
+    } catch (error) {
+        console.error('❌ API Connection: FAILED');
+        console.error('Error:', error.message);
+        return false;
+    }
+}
+
+// Test 2: Check localStorage
+function checkLocalStorage() {
+    console.log('📦 Checking localStorage...');
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    
+    if (token) {
+        console.log('✅ Token found:', token.substring(0, 20) + '...');
+    } else {
+        console.log('❌ No token found');
+    }
+    
+    if (user) {
+        console.log('✅ User data found:', JSON.parse(user));
+    } else {
+        console.log('❌ No user data found');
+    }
+}
+
+// Test 3: Test loading doctors
+async function testLoadDoctors() {
+    console.log('👨‍⚕️ Testing doctor loading...');
+    
+    try {
+        const response = await fetch(`${API_URL}/doctors`);
+        const data = await response.json();
+        
+        if (data.success) {
+            console.log('✅ Doctors loaded:', data.doctors.length, 'doctors found');
+            data.doctors.forEach(doc => {
+                console.log(`   - ${doc.name} (${doc.specialization})`);
+            });
+            return true;
+        } else {
+            console.error('❌ Failed to load doctors:', data.message);
+            return false;
+        }
+    } catch (error) {
+        console.error('❌ Error loading doctors:', error.message);
+        return false;
+    }
+}
+
+// Test 4: Check authentication
+async function testAuth() {
+    console.log('🔐 Testing authentication...');
+    
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    
+    if (!token || !user) {
+        console.error('❌ Not logged in');
+        return false;
+    }
+    
+    try {
+        const response = await fetch(`${API_URL}/dashboard`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            console.log('✅ Authentication: SUCCESS');
+            console.log('User:', user.name, `(${user.role})`);
+            return true;
+        } else {
+            console.error('❌ Authentication failed:', data.message);
+            return false;
+        }
+    } catch (error) {
+        console.error('❌ Auth check error:', error.message);
+        return false;
+    }
+}
+
+// Run all tests
+async function runDiagnostics() {
+    console.log('═══════════════════════════════════════');
+    console.log('🚀 RUNNING CONNECTION DIAGNOSTICS');
+    console.log('═══════════════════════════════════════');
+    
+    checkLocalStorage();
+    console.log('---');
+    
+    const apiOk = await testConnection();
+    console.log('---');
+    
+    if (apiOk) {
+        await testLoadDoctors();
+        console.log('---');
+        await testAuth();
+    }
+    
+    console.log('═══════════════════════════════════════');
+    console.log('📋 DIAGNOSTICS COMPLETE');
+    console.log('═══════════════════════════════════════');
+}
+
+// Run diagnostics when page loads
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', runDiagnostics);
+} else {
+    runDiagnostics();
+}
+        
+        // Toggle between Login and Register forms
+        function showLogin() {
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('registerForm').classList.add('hidden');
+            document.querySelectorAll('.tab')[0].classList.add('active');
+            document.querySelectorAll('.tab')[1].classList.remove('active');
+        }
+        
+        function showRegister() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('registerForm').classList.remove('hidden');
+            document.querySelectorAll('.tab')[0].classList.remove('active');
+            document.querySelectorAll('.tab')[1].classList.add('active');
+        }
+        
+        // Toggle password visibility
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const btn = input.nextElementSibling;
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.textContent = 'Hide';
+            } else {
+                input.type = 'password';
+                btn.textContent = 'Show';
+            }
+        }
+        
+        // Show message
+        function showMessage(elementId, message, type) {
+            const msgElement = document.getElementById(elementId);
+            msgElement.textContent = message;
+            msgElement.className = `message ${type}`;
+            msgElement.style.display = 'block';
+            
+            setTimeout(() => {
+                msgElement.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Handle Login
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            try {
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Save token and user info to localStorage
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    
+                    showMessage('loginMessage', data.message, 'success');
+                    
+                    // Redirect to dashboard after 1 second
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1000);
+                } else {
+                    showMessage('loginMessage', data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('loginMessage', 'Connection error. Is the server running?', 'error');
+            }
+        }
+        
+        // Handle Registration
+        async function handleRegister(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const phone = document.getElementById('registerPhone').value;
+            const password = document.getElementById('registerPassword').value;
+            const role = document.getElementById('registerRole').value;
+            
+            try {
+                const response = await fetch(`${API_URL}/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, email, phone, password, role })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showMessage('registerMessage', data.message, 'success');
+                    
+                    // Clear form
+                    event.target.reset();
+                    
+                    // Switch to login after 2 seconds
+                    setTimeout(() => {
+                        showLogin();
+                    }, 2000);
+                } else {
+                    showMessage('registerMessage', data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('registerMessage', 'Connection error. Is the server running?', 'error');
+            }
+        }
+    </script>
+</body>
+</html>

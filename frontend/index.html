@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 500px;
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 32px;
+        }
+        
+        p {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        button:hover {
+            transform: scale(1.05);
+        }
+        
+        #result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .success {
+            color: #28a745;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏥 Hospital Management System</h1>
+        <p>Welcome! Your project is ready to start.</p>
+        <button onclick="testBackend()">Test Backend Connection</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Add this script to your HTML files to debug connection issues
+// Put this at the very top of your <script> section
+
+console.log('🔍 Starting connection diagnostics...');
+
+const API_URL = 'http://localhost:5000/api';
+
+// Test 1: Check if API is reachable
+async function testConnection() {
+    console.log('📡 Testing API connection to:', API_URL);
+    
+    try {
+        const response = await fetch(`${API_URL}/test`);
+        const data = await response.json();
+        console.log('✅ API Connection: SUCCESS');
+        console.log('Response:', data);
+        return true;
+    } catch (error) {
+        console.error('❌ API Connection: FAILED');
+        console.error('Error:', error.message);
+        return false;
+    }
+}
+
+// Test 2: Check localStorage
+function checkLocalStorage() {
+    console.log('📦 Checking localStorage...');
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    
+    if (token) {
+        console.log('✅ Token found:', token.substring(0, 20) + '...');
+    } else {
+        console.log('❌ No token found');
+    }
+    
+    if (user) {
+        console.log('✅ User data found:', JSON.parse(user));
+    } else {
+        console.log('❌ No user data found');
+    }
+}
+
+// Test 3: Test loading doctors
+async function testLoadDoctors() {
+    console.log('👨‍⚕️ Testing doctor loading...');
+    
+    try {
+        const response = await fetch(`${API_URL}/doctors`);
+        const data = await response.json();
+        
+        if (data.success) {
+            console.log('✅ Doctors loaded:', data.doctors.length, 'doctors found');
+            data.doctors.forEach(doc => {
+                console.log(`   - ${doc.name} (${doc.specialization})`);
+            });
+            return true;
+        } else {
+            console.error('❌ Failed to load doctors:', data.message);
+            return false;
+        }
+    } catch (error) {
+        console.error('❌ Error loading doctors:', error.message);
+        return false;
+    }
+}
+
+// Test 4: Check authentication
+async function testAuth() {
+    console.log('🔐 Testing authentication...');
+    
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    
+    if (!token || !user) {
+        console.error('❌ Not logged in');
+        return false;
+    }
+    
+    try {
+        const response = await fetch(`${API_URL}/dashboard`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            console.log('✅ Authentication: SUCCESS');
+            console.log('User:', user.name, `(${user.role})`);
+            return true;
+        } else {
+            console.error('❌ Authentication failed:', data.message);
+            return false;
+        }
+    } catch (error) {
+        console.error('❌ Auth check error:', error.message);
+        return false;
+    }
+}
+
+// Run all tests
+async function runDiagnostics() {
+    console.log('═══════════════════════════════════════');
+    console.log('🚀 RUNNING CONNECTION DIAGNOSTICS');
+    console.log('═══════════════════════════════════════');
+    
+    checkLocalStorage();
+    console.log('---');
+    
+    const apiOk = await testConnection();
+    console.log('---');
+    
+    if (apiOk) {
+        await testLoadDoctors();
+        console.log('---');
+        await testAuth();
+    }
+    
+    console.log('═══════════════════════════════════════');
+    console.log('📋 DIAGNOSTICS COMPLETE');
+    console.log('═══════════════════════════════════════');
+}
+
+// Run diagnostics when page loads
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', runDiagnostics);
+} else {
+    runDiagnostics();
+}
+        async function testBackend() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '⏳ Connecting to backend...';
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/test');
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `
+                    <p class="success">✅ SUCCESS!</p>
+                    <p>${data.message}</p>
+                    <p>Time: ${new Date(data.timestamp).toLocaleString()}</p>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <p style="color: red;">❌ Backend is not running!</p>
+                    <p>Make sure you started the server with 'npm start'</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

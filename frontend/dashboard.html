@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Hospital Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #E0F4FB;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #38BDF8 0%, #0EA5E9 100%);
+            color: #FFFFFF;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(8,145,178,0.3);
+        }
+        
+        .navbar h1 {
+            font-size: 24px;
+        }
+        
+        .nav-right {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .nav-right a {
+            color: #FFFFFF;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: background 0.3s;
+        }
+        
+        .nav-right a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .navbar button {
+            background: rgba(255,255,255,0.2);
+            color: #FFFFFF;
+            border: 2px solid #FFFFFF;
+            padding: 10px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .navbar button:hover {
+            background: #FFFFFF;
+            color: #0EA5E9;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .welcome-card {
+            background: #FFFFFF;
+            border: 1px solid #A5E4F3;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 12px 30px rgba(8,145,178,0.20);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .welcome-card h2 {
+            color: #0EA5E9;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .welcome-card p {
+            color: #475569;
+            font-size: 18px;
+        }
+        
+        .user-info {
+            background: #FFFFFF;
+            border: 1px solid #A5E4F3;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 12px 30px rgba(8,145,178,0.20);
+            margin-bottom: 30px;
+        }
+        
+        .user-info h3 {
+            color: #0F172A;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .info-row {
+            display: flex;
+            padding: 15px 0;
+            border-bottom: 1px solid #E0F4FB;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #06B6D4;
+            width: 150px;
+        }
+        
+        .info-value {
+            color: #0F172A;
+            flex: 1;
+        }
+        
+        .role-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: capitalize;
+            background: #BAE6FD;
+            color: #0C4A6E;
+        }
+        
+        .role-patient {
+            background: #BAE6FD;
+            color: #0C4A6E;
+        }
+        
+        .role-doctor {
+            background: #A5F3FC;
+            color: #164E63;
+        }
+        
+        .role-admin {
+            background: #FED7AA;
+            color: #9A3412;
+        }
+        
+        .admin-actions {
+            background: #FFFFFF;
+            border: 1px solid #A5E4F3;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 12px 30px rgba(8,145,178,0.20);
+        }
+        
+        .admin-actions h3 {
+            color: #0F172A;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .action-card {
+            background: #F8FEFF;
+            border: 2px solid #A5E4F3;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .action-card:hover {
+            border-color: #22D3EE;
+            transform: translateY(-5px);
+            box-shadow: 0 0 0 1px #A5E4F3;
+        }
+        
+        .action-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        .action-title {
+            color: #0F172A;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .action-desc {
+            color: #475569;
+            font-size: 14px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #475569;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>🏥 Hospital Management System</h1>
+        <div class="nav-right" id="navLinks">
+            <!-- Navigation will be dynamically inserted based on role -->
+        </div>
+    </div>
+    
+    <div class="container">
+        <div id="loading" class="loading">
+            <h2>Loading...</h2>
+        </div>
+        
+        <div id="dashboard" style="display: none;">
+            <div class="welcome-card">
+                <h2 id="welcomeMessage">Welcome!</h2>
+                <p>You are successfully logged in</p>
+            </div>
+            
+            <div class="user-info">
+                <h3>Your Profile</h3>
+                <div class="info-row">
+                    <div class="info-label">Name:</div>
+                    <div class="info-value" id="userName"></div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Email:</div>
+                    <div class="info-value" id="userEmail"></div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Role:</div>
+                    <div class="info-value">
+                        <span class="role-badge" id="userRole"></span>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">User ID:</div>
+                    <div class="info-value" id="userId"></div>
+                </div>
+            </div>
+            
+            <!-- Admin Quick Actions -->
+            <div id="adminActions" class="admin-actions" style="display: none;">
+                <h3>⚡ Quick Actions</h3>
+                <div class="action-grid">
+                    <a href="admin-add-doctor.html" class="action-card">
+                        <div class="action-icon">👨‍⚕️</div>
+                        <div class="action-title">Add Doctor</div>
+                        <div class="action-desc">Register new doctor in system</div>
+                    </a>
+                    
+                    <a href="admin-appointments.html" class="action-card">
+                        <div class="action-icon">📅</div>
+                        <div class="action-title">Manage Appointments</div>
+                        <div class="action-desc">View all appointments</div>
+                    </a>
+                    
+                    <a href="#" class="action-card">
+                        <div class="action-icon">👥</div>
+                        <div class="action-title">Manage Patients</div>
+                        <div class="action-desc">View patient records</div>
+                    </a>
+                    
+                    <a href="#" class="action-card">
+                        <div class="action-icon">📊</div>
+                        <div class="action-title">Reports</div>
+                        <div class="action-desc">Generate system reports</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+       // Add this script to your HTML files to debug connection issues
+// Put this at the very top of your <script> section
+
+console.log('🔍 Starting connection diagnostics...');
+
+const API_URL = 'http://localhost:5000/api';
+
+// Test 1: Check if API is reachable
+async function testConnection() {
+    console.log('📡 Testing API connection to:', API_URL);
+    
+    try {
+        const response = await fetch(`${API_URL}/test`);
+        const data = await response.json();
+        console.log('✅ API Connection: SUCCESS');
+        console.log('Response:', data);
+        return true;
+    } catch (error) {
+        console.error('❌ API Connection: FAILED');
+        console.error('Error:', error.message);
+        return false;
+    }
+}
+
+// Test 2: Check localStorage
+function checkLocalStorage() {
+    console.log('📦 Checking localStorage...');
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    
+    if (token) {
+        console.log('✅ Token found:', token.substring(0, 20) + '...');
+    } else {
+        console.log('❌ No token found');
+    }
+    
+    if (user) {
+        console.log('✅ User data found:', JSON.parse(user));
+    } else {
+        console.log('❌ No user data found');
+    }
+}
+
+// Test 3: Test loading doctors
+async function testLoadDoctors() {
+    console.log('👨‍⚕️ Testing doctor loading...');
+    
+    try {
+        const response = await fetch(`${API_URL}/doctors`);
+        const data = await response.json();
+        
+        if (data.success) {
+            console.log('✅ Doctors loaded:', data.doctors.length, 'doctors found');
+            data.doctors.forEach(doc => {
+                console.log(`   - ${doc.name} (${doc.specialization})`);
+            });
+            return true;
+        } else {
+            console.error('❌ Failed to load doctors:', data.message);
+            return false;
+        }
+    } catch (error) {
+        console.error('❌ Error loading doctors:', error.message);
+        return false;
+    }
+}
+
+// Test 4: Check authentication
+async function testAuth() {
+    console.log('🔐 Testing authentication...');
+    
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    
+    if (!token || !user) {
+        console.error('❌ Not logged in');
+        return false;
+    }
+    
+    try {
+        const response = await fetch(`${API_URL}/dashboard`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            console.log('✅ Authentication: SUCCESS');
+            console.log('User:', user.name, `(${user.role})`);
+            return true;
+        } else {
+            console.error('❌ Authentication failed:', data.message);
+            return false;
+        }
+    } catch (error) {
+        console.error('❌ Auth check error:', error.message);
+        return false;
+    }
+}
+
+// Run all tests
+async function runDiagnostics() {
+    console.log('═══════════════════════════════════════');
+    console.log('🚀 RUNNING CONNECTION DIAGNOSTICS');
+    console.log('═══════════════════════════════════════');
+    
+    checkLocalStorage();
+    console.log('---');
+    
+    const apiOk = await testConnection();
+    console.log('---');
+    
+    if (apiOk) {
+        await testLoadDoctors();
+        console.log('---');
+        await testAuth();
+    }
+    
+    console.log('═══════════════════════════════════════');
+    console.log('📋 DIAGNOSTICS COMPLETE');
+    console.log('═══════════════════════════════════════');
+}
+
+// Run diagnostics when page loads
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', runDiagnostics);
+} else {
+    runDiagnostics();
+}
+        
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user'));
+            
+            if (!token || !user) {
+                window.location.href = 'auth.html';
+                return;
+            }
+            
+            loadDashboard(token, user);
+        }
+        
+        function buildNavigation(role) {
+            const navLinks = document.getElementById('navLinks');
+            
+            let html = '<a href="dashboard.html">Dashboard</a>';
+            
+            if (role === 'patient') {
+    html += '<a href="patient-profile.html">Patient Profile</a>';
+    html += '<a href="doctors.html">Book Appointment</a>';
+    html += '<a href="appointments.html">My Appointments</a>';
+    html += '<a href="medical-history.html">Medical History</a>';
+} else if (role === 'admin') {
+    html += '<a href="admin-appointments.html">Appointments</a>';
+    html += '<a href="admin-add-doctor.html">Add Doctor</a>';
+} else if (role === 'doctor') {
+     html += '<a href="doctor-availability.html">My Availability</a>';
+    html += '<a href="doctor-appointments.html">My Appointments</a>';
+    html += '<a href="write-prescription.html">Write Prescription</a>';
+}
+            
+            html += '<button onclick="logout()">Logout</button>';
+            
+            navLinks.innerHTML = html;
+        }
+        
+        async function loadDashboard(token, user) {
+            try {
+                const response = await fetch(`${API_URL}/dashboard`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('dashboard').style.display = 'block';
+                    
+                    // Build navigation based on role
+                    buildNavigation(user.role);
+                    
+                    // Display welcome message
+                    if (user.role === 'admin') {
+                        document.getElementById('welcomeMessage').textContent = `Welcome, Super Admin!`;
+                        document.getElementById('adminActions').style.display = 'block';
+                    } else {
+                        document.getElementById('welcomeMessage').textContent = `Welcome, ${user.name}!`;
+                    }
+                    
+                    document.getElementById('userName').textContent = user.name;
+                    document.getElementById('userEmail').textContent = user.email;
+                    document.getElementById('userId').textContent = user.id;
+                    
+                    const roleBadge = document.getElementById('userRole');
+                    roleBadge.textContent = user.role;
+                    roleBadge.className = `role-badge role-${user.role}`;
+                } else {
+                    alert('Session expired. Please login again.');
+                    logout();
+                }
+            } catch (error) {
+                console.error('Dashboard error:', error);
+                alert('Error loading dashboard. Please try again.');
+                logout();
+            }
+        }
+        
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'auth.html';
+        }
+        
+        checkAuth();
+    </script>
+</body>
+</html>

@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Appointments - Hospital Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #E0F4FB;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #38BDF8 0%, #0EA5E9 100%);
+            color: #FFFFFF;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(8,145,178,0.3);
+        }
+        
+        .navbar h1 {
+            font-size: 24px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-links a {
+            color: #FFFFFF;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: background 0.3s;
+        }
+        
+        .nav-links a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .page-header h2 {
+            color: #0F172A;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .page-header p {
+            color: #475569;
+            font-size: 16px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: #FFFFFF;
+            border: 1px solid #A5E4F3;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 12px 30px rgba(8,145,178,0.20);
+        }
+        
+        .stat-number {
+            font-size: 42px;
+            font-weight: 700;
+            color: #0EA5E9;
+            margin-bottom: 8px;
+        }
+        
+        .stat-label {
+            color: #475569;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .tabs {
+            display: flex;
+            background: #FFFFFF;
+            border: 1px solid #A5E4F3;
+            border-radius: 15px 15px 0 0;
+            overflow: hidden;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 18px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            background: #F8FEFF;
+            font-size: 16px;
+            font-weight: 600;
+            color: #475569;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab.active {
+            background: #FFFFFF;
+            color: #0EA5E9;
+            border-bottom: 3px solid #0EA5E9;
+        }
+        
+        .tab-content {
+            background: #FFFFFF;
+            border: 1px solid #A5E4F3;
+            border-top: none;
+            border-radius: 0 0 15px 15px;
+            padding: 30px;
+            box-shadow: 0 12px 30px rgba(8,145,178,0.20);
+        }
+        
+        .sort-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .sort-label {
+            color: #0F172A;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .sort-dropdown {
+            padding: 10px 15px;
+            border: 2px solid #A5E4F3;
+            border-radius: 8px;
+            background: #FFFFFF;
+            color: #0F172A;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .sort-dropdown:focus {
+            outline: none;
+            border-color: #22D3EE;
+        }
+        
+        .tab-pane {
+            display: none;
+        }
+        
+        .tab-pane.active {
+            display: block;
+        }
+        
+        .appointments-list {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .appointment-card {
+            background: #F8FEFF;
+            border: 1px solid #A5E4F3;
+            border-radius: 15px;
+            padding: 25px;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 25px;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        .appointment-card:hover {
+            border-color: #22D3EE;
+            box-shadow: 0 0 0 1px #A5E4F3;
+        }
+        
+        .appointment-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #38BDF8 0%, #0EA5E9 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFFFFF;
+            font-size: 24px;
+        }
+        
+        .appointment-details h3 {
+            color: #0F172A;
+            margin-bottom: 8px;
+            font-size: 20px;
+        }
+        
+        .appointment-meta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #475569;
+            font-size: 14px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+        
+        .status-confirmed {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+        
+        .status-pending {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+        
+        .status-completed {
+            background: #DBEAFE;
+            color: #1E40AF;
+        }
+        
+        .status-cancelled {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+        
+        .appointment-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+        
+        .cancel-btn {
+            background: #DC2626;
+            color: #FFFFFF;
+            box-shadow: 0 4px 12px rgba(220,38,38,0.3);
+        }
+        
+        .cancel-btn:hover {
+            background: #B91C1C;
+        }
+        
+        .cancel-btn:disabled {
+            background: #94A3B8;
+            cursor: not-allowed;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #475569;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            color: #94A3B8;
+        }
+        
+        .empty-state h3 {
+            margin-bottom: 15px;
+        }
+        
+        .book-now-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: #0EA5E9;
+            color: #FFFFFF;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(14,165,233,0.45);
+            transition: all 0.3s;
+        }
+        
+        .book-now-btn:hover {
+            background: #0284C7;
+            transform: scale(1.05);
+        }
+        
+        @media (max-width: 768px) {
+            .appointment-card {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .appointment-meta {
+                justify-content: center;
+            }
+            
+            .appointment-actions {
+                flex-direction: row;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>🏥 Hospital Management</h1>
+        <div class="nav-links">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="patient-profile.html">Patient Profile</a>
+            <a href="doctors.html">Book Appointment</a>
+            <a href="appointments.html">My Appointments</a>
+            <a href="medical-history.html">Medical History</a>
+            <a href="#" onclick="logout()">Logout</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="page-header">
+            <h2>📋 My Appointments</h2>
+            <p>View and manage your appointments</p>
+        </div>
+        
+        <div id="loading" class="loading">
+            <h3>Loading appointments...</h3>
+        </div>
+        
+        <div id="appointmentsContent" style="display: none;">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="todayCount">0</div>
+                    <div class="stat-label">Today's Appointments</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="futureCount">0</div>
+                    <div class="stat-label">Upcoming</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="pastCount">0</div>
+                    <div class="stat-label">Past Appointments</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="cancelledCount">0</div>
+                    <div class="stat-label">Cancelled</div>
+                </div>
+            </div>
+            
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('today')">📅 Today's Appointments</button>
+                <button class="tab" onclick="switchTab('future')">📋 Future Appointments</button>
+                <button class="tab" onclick="switchTab('past')">📋 Past Appointments</button>
+                <button class="tab" onclick="switchTab('cancelled')">❌ Cancelled</button>
+            </div>
+            
+            <div class="tab-content">
+                <div class="sort-container">
+                    <label class="sort-label">Sort by:</label>
+                    <select class="sort-dropdown" id="sortSelect" onchange="handleSort()">
+                        <option value="oldest">Oldest First</option>
+                        <option value="newest">Newest First</option>
+                    </select>
+                </div>
+                
+                <div id="today" class="tab-pane active">
+                    <div id="todayList" class="appointments-list"></div>
+                </div>
+                
+                <div id="future" class="tab-pane">
+                    <div id="futureList" class="appointments-list"></div>
+                </div>
+                
+                <div id="past" class="tab-pane">
+                    <div id="pastList" class="appointments-list"></div>
+                </div>
+                
+                <div id="cancelled" class="tab-pane">
+                    <div id="cancelledList" class="appointments-list"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <h3>🔭 No appointments yet</h3>
+            <p>You haven't booked any appointments</p>
+            <a href="doctors.html" class="book-now-btn">Book Your First Appointment</a>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        let allAppointments = [];
+        
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user'));
+            
+            if (!token || !user || user.role !== 'patient') {
+                window.location.href = 'auth.html';
+                return false;
+            }
+            return true;
+        }
+        
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+        
+        function handleSort() {
+            const sortType = document.getElementById('sortSelect').value;
+            categorizeAndDisplay(sortType);
+        }
+        
+        async function loadAppointments() {
+            if (!checkAuth()) return;
+            
+            const token = localStorage.getItem('token');
+            
+            try {
+                const response = await fetch(`${API_URL}/appointments/my`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                document.getElementById('loading').style.display = 'none';
+                
+                if (data.success) {
+                    allAppointments = data.appointments;
+                    
+                    if (allAppointments.length === 0) {
+                        document.getElementById('emptyState').style.display = 'block';
+                    } else {
+                        document.getElementById('appointmentsContent').style.display = 'block';
+                        categorizeAndDisplay('oldest');
+                    }
+                } else {
+                    alert('Error loading appointments');
+                }
+            } catch (error) {
+                console.error('Load appointments error:', error);
+                document.getElementById('loading').innerHTML = '<p style="color: #DC2626;">Connection error. Please refresh.</p>';
+            }
+        }
+        
+        function categorizeAndDisplay(sortType = 'oldest') {
+            // Get current date and time in local timezone
+            const now = new Date();
+            
+            // Get today's date string in YYYY-MM-DD format (local timezone)
+            const todayYear = now.getFullYear();
+            const todayMonth = String(now.getMonth() + 1).padStart(2, '0');
+            const todayDay = String(now.getDate()).padStart(2, '0');
+            const todayDateStr = `${todayYear}-${todayMonth}-${todayDay}`;
+            
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            const currentTimeInMinutes = currentHour * 60 + currentMinute;
+            
+            console.log('Current Date:', todayDateStr);
+            console.log('Current Time:', `${currentHour}:${currentMinute}`);
+            
+            // Categorize appointments
+            const todayAppts = [];
+            const futureAppts = [];
+            const pastAppts = [];
+            const cancelledAppts = [];
+            
+            allAppointments.forEach(apt => {
+                // Parse appointment date properly
+                const aptDate = new Date(apt.appointment_date);
+                const aptYear = aptDate.getFullYear();
+                const aptMonth = String(aptDate.getMonth() + 1).padStart(2, '0');
+                const aptDay = String(aptDate.getDate()).padStart(2, '0');
+                const aptDateStr = `${aptYear}-${aptMonth}-${aptDay}`;
+                
+                console.log(`Appointment: ${aptDateStr} at ${apt.appointment_time}`);
+                
+                // If cancelled, always put in cancelled
+                if (apt.status === 'cancelled') {
+                    cancelledAppts.push(apt);
+                    return;
+                }
+                
+                // Compare dates
+                if (aptDateStr === todayDateStr) {
+                    // It's today - check the time
+                    const aptTime = apt.appointment_time.substring(0, 5);
+                    const [aptHour, aptMinute] = aptTime.split(':').map(Number);
+                    const aptTimeInMinutes = aptHour * 60 + aptMinute;
+                    
+                    if (aptTimeInMinutes < currentTimeInMinutes || apt.status === 'completed') {
+                        // Past (already happened today)
+                        pastAppts.push(apt);
+                    } else {
+                        // Today (upcoming today)
+                        todayAppts.push(apt);
+                    }
+                } else if (aptDateStr > todayDateStr) {
+                    // Future date
+                    futureAppts.push(apt);
+                } else {
+                    // Past date
+                    pastAppts.push(apt);
+                }
+            });
+            
+            console.log('Today:', todayAppts.length, 'Future:', futureAppts.length, 'Past:', pastAppts.length);
+            
+            // Update stats
+            document.getElementById('todayCount').textContent = todayAppts.length;
+            document.getElementById('futureCount').textContent = futureAppts.length;
+            document.getElementById('pastCount').textContent = pastAppts.length;
+            document.getElementById('cancelledCount').textContent = cancelledAppts.length;
+            
+            // Sort and display
+            const sortAppts = (apts, tab) => {
+                const sorted = [...apts];
+                
+                if (tab === 'today') {
+                    // Today: only sort by time
+                    sorted.sort((a, b) => {
+                        const timeA = a.appointment_time;
+                        const timeB = b.appointment_time;
+                        
+                        if (sortType === 'oldest') {
+                            return timeA.localeCompare(timeB);
+                        } else {
+                            return timeB.localeCompare(timeA);
+                        }
+                    });
+                } else {
+                    // Future, Past, Cancelled: sort by date first, then time
+                    sorted.sort((a, b) => {
+                        const dateA = new Date(a.appointment_date);
+                        const dateB = new Date(b.appointment_date);
+                        
+                        if (dateA.getTime() !== dateB.getTime()) {
+                            if (sortType === 'oldest') {
+                                return dateA - dateB;
+                            } else {
+                                return dateB - dateA;
+                            }
+                        }
+                        
+                        // Same date: sort by time
+                        const timeA = a.appointment_time;
+                        const timeB = b.appointment_time;
+                        
+                        if (sortType === 'oldest') {
+                            return timeA.localeCompare(timeB);
+                        } else {
+                            return timeB.localeCompare(timeA);
+                        }
+                    });
+                }
+                
+                return sorted;
+            };
+            
+            displayAppointments(sortAppts(todayAppts, 'today'), 'todayList', true);
+            displayAppointments(sortAppts(futureAppts, 'future'), 'futureList', true);
+            displayAppointments(sortAppts(pastAppts, 'past'), 'pastList', false);
+            displayAppointments(sortAppts(cancelledAppts, 'cancelled'), 'cancelledList', false);
+        }
+        
+        function displayAppointments(appointments, listId, canCancel) {
+            const list = document.getElementById(listId);
+            
+            if (appointments.length === 0) {
+                list.innerHTML = '<div class="empty-state"><h3>🔭 No appointments in this category</h3></div>';
+                return;
+            }
+            
+            list.innerHTML = appointments.map(apt => {
+                const date = new Date(apt.appointment_date);
+                const formattedDate = date.toLocaleDateString('en-IN', { 
+                    weekday: 'short', 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric' 
+                });
+                
+                const timeStr = apt.appointment_time.substring(0, 5);
+                const [hours, minutes] = timeStr.split(':');
+                const hour = parseInt(hours);
+                const ampm = hour >= 12 ? 'PM' : 'AM';
+                const hour12 = hour % 12 || 12;
+                const time12 = `${hour12}:${minutes} ${ampm}`;
+                
+                const showCancel = canCancel && (apt.status === 'confirmed' || apt.status === 'pending');
+                
+                return `
+                    <div class="appointment-card">
+                        <div class="appointment-icon">
+                            👨‍⚕️
+                        </div>
+                        
+                        <div class="appointment-details">
+                            <h3>${apt.doctor_name}</h3>
+                            <div class="appointment-meta">
+                                <div class="meta-item">
+                                    <span>📅</span>
+                                    <span>${formattedDate}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span>🕐</span>
+                                    <span>${time12}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span>🩺</span>
+                                    <span>${apt.specialization}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span>Consultation Fee:</span>
+                                    <span>₹${apt.consultation_fee}</span>
+                                </div>
+                            </div>
+                            <span class="status-badge status-${apt.status}">${apt.status}</span>
+                        </div>
+                        
+                        <div class="appointment-actions">
+                            ${showCancel ? `
+                                <button class="action-btn cancel-btn" onclick="cancelAppointment(${apt.id})">
+                                    ❌ Cancel
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        async function cancelAppointment(appointmentId) {
+            const reason = prompt('Reason for cancellation (optional):');
+            
+            if (reason === null) return;
+            
+            if (!confirm('Are you sure you want to cancel this appointment? You will receive a full refund.')) {
+                return;
+            }
+            
+            const token = localStorage.getItem('token');
+            
+            try {
+                const response = await fetch(`${API_URL}/appointments/${appointmentId}/cancel`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ reason })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ Appointment cancelled successfully! Refund will be processed.');
+                    loadAppointments();
+                } else {
+                    alert(data.message || 'Error cancelling appointment');
+                }
+            } catch (error) {
+                console.error('Cancel appointment error:', error);
+                alert('Connection error');
+            }
+        }
+        
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'auth.html';
+        }
+        
+        loadAppointments();
+    </script>
+</body>
+</html>

@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical History - Hospital Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #E0F4FB;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #38BDF8 0%, #0EA5E9 100%);
+            color: #FFFFFF;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(8,145,178,0.3);
+        }
+        
+        .navbar h1 {
+            font-size: 24px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-links a {
+            color: #FFFFFF;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: background 0.3s;
+        }
+        
+        .nav-links a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .page-header h2 {
+            color: #0F172A;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .page-header p {
+            color: #475569;
+        }
+        
+        .prescriptions-list {
+            display: grid;
+            gap: 25px;
+        }
+        
+        .prescription-card {
+            background: #FFFFFF;
+            border: 1px solid #A5E4F3;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 12px 30px rgba(8,145,178,0.20);
+        }
+        
+        .prescription-header {
+            background: linear-gradient(135deg, #38BDF8 0%, #0EA5E9 100%);
+            color: #FFFFFF;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .prescription-header h3 {
+            font-size: 20px;
+        }
+        
+        .prescription-date {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .prescription-body {
+            padding: 25px;
+        }
+        
+        .doctor-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: #F8FEFF;
+            border: 1px solid #A5E4F3;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .doctor-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #38BDF8 0%, #0EA5E9 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFFFFF;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .doctor-details h4 {
+            color: #0F172A;
+            margin-bottom: 3px;
+        }
+        
+        .doctor-details p {
+            color: #475569;
+            font-size: 14px;
+        }
+        
+        .prescription-section {
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            color: #06B6D4;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .section-content {
+            color: #0F172A;
+            font-size: 15px;
+            line-height: 1.6;
+            padding: 12px;
+            background: #F8FEFF;
+            border-left: 3px solid #0EA5E9;
+            border-radius: 5px;
+        }
+        
+        .medicines-list {
+            display: grid;
+            gap: 10px;
+        }
+        
+        .medicine-item {
+            background: #FFFFFF;
+            border: 1px solid #A5E4F3;
+            padding: 12px;
+            border-radius: 8px;
+        }
+        
+        .medicine-name {
+            color: #0F172A;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .medicine-details {
+            color: #475569;
+            font-size: 14px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #475569;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #94A3B8;
+        }
+        
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: #475569;
+        }
+        
+        @media print {
+            .navbar, .nav-links {
+                display: none;
+            }
+            
+            body {
+                background: white;
+            }
+            
+            .prescription-card {
+                page-break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>🏥 Hospital Management</h1>
+        <div class="nav-links">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="patient-profile.html">Patient Profile</a>
+            <a href="doctors.html">Book Appointment</a>
+            <a href="appointments.html">My Appointments</a>
+            <a href="medical-history.html">Medical History</a>
+            <a href="#" onclick="logout()">Logout</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="page-header">
+            <h2>📋 Medical History & Prescriptions</h2>
+            <p>View all your past prescriptions and medical records</p>
+        </div>
+        
+        <div id="loading" class="loading">
+            <h3>Loading medical history...</h3>
+        </div>
+        
+        <div id="prescriptionsList" class="prescriptions-list" style="display: none;"></div>
+        
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <div class="empty-state-icon">📋</div>
+            <h3>No Medical History Yet</h3>
+            <p>Your prescriptions from completed appointments will appear here</p>
+        </div>
+    </div>
+
+    <script>
+       // Add this script to your HTML files to debug connection issues
+// Put this at the very top of your <script> section
+
+console.log('🔍 Starting connection diagnostics...');
+
+const API_URL = 'http://localhost:5000/api';
+
+// Test 1: Check if API is reachable
+async function testConnection() {
+    console.log('📡 Testing API connection to:', API_URL);
+    
+    try {
+        const response = await fetch(`${API_URL}/test`);
+        const data = await response.json();
+        console.log('✅ API Connection: SUCCESS');
+        console.log('Response:', data);
+        return true;
+    } catch (error) {
+        console.error('❌ API Connection: FAILED');
+        console.error('Error:', error.message);
+        return false;
+    }
+}
+
+// Test 2: Check localStorage
+function checkLocalStorage() {
+    console.log('📦 Checking localStorage...');
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    
+    if (token) {
+        console.log('✅ Token found:', token.substring(0, 20) + '...');
+    } else {
+        console.log('❌ No token found');
+    }
+    
+    if (user) {
+        console.log('✅ User data found:', JSON.parse(user));
+    } else {
+        console.log('❌ No user data found');
+    }
+}
+
+// Test 3: Test loading doctors
+async function testLoadDoctors() {
+    console.log('👨‍⚕️ Testing doctor loading...');
+    
+    try {
+        const response = await fetch(`${API_URL}/doctors`);
+        const data = await response.json();
+        
+        if (data.success) {
+            console.log('✅ Doctors loaded:', data.doctors.length, 'doctors found');
+            data.doctors.forEach(doc => {
+                console.log(`   - ${doc.name} (${doc.specialization})`);
+            });
+            return true;
+        } else {
+            console.error('❌ Failed to load doctors:', data.message);
+            return false;
+        }
+    } catch (error) {
+        console.error('❌ Error loading doctors:', error.message);
+        return false;
+    }
+}
+
+// Test 4: Check authentication
+async function testAuth() {
+    console.log('🔐 Testing authentication...');
+    
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    
+    if (!token || !user) {
+        console.error('❌ Not logged in');
+        return false;
+    }
+    
+    try {
+        const response = await fetch(`${API_URL}/dashboard`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            console.log('✅ Authentication: SUCCESS');
+            console.log('User:', user.name, `(${user.role})`);
+            return true;
+        } else {
+            console.error('❌ Authentication failed:', data.message);
+            return false;
+        }
+    } catch (error) {
+        console.error('❌ Auth check error:', error.message);
+        return false;
+    }
+}
+
+// Run all tests
+async function runDiagnostics() {
+    console.log('═══════════════════════════════════════');
+    console.log('🚀 RUNNING CONNECTION DIAGNOSTICS');
+    console.log('═══════════════════════════════════════');
+    
+    checkLocalStorage();
+    console.log('---');
+    
+    const apiOk = await testConnection();
+    console.log('---');
+    
+    if (apiOk) {
+        await testLoadDoctors();
+        console.log('---');
+        await testAuth();
+    }
+    
+    console.log('═══════════════════════════════════════');
+    console.log('📋 DIAGNOSTICS COMPLETE');
+    console.log('═══════════════════════════════════════');
+}
+
+// Run diagnostics when page loads
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', runDiagnostics);
+} else {
+    runDiagnostics();
+}
+        
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user'));
+            
+            if (!token || !user || user.role !== 'patient') {
+                window.location.href = 'auth.html';
+                return false;
+            }
+            return true;
+        }
+        
+        async function loadPrescriptions() {
+            if (!checkAuth()) return;
+            
+            const token = localStorage.getItem('token');
+            
+            try {
+                const response = await fetch(`${API_URL}/prescriptions/my`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                document.getElementById('loading').style.display = 'none';
+                
+                if (data.success) {
+                    if (data.prescriptions.length === 0) {
+                        document.getElementById('emptyState').style.display = 'block';
+                    } else {
+                        document.getElementById('prescriptionsList').style.display = 'grid';
+                        displayPrescriptions(data.prescriptions);
+                    }
+                } else {
+                    alert('Error loading medical history');
+                }
+            } catch (error) {
+                console.error('Load prescriptions error:', error);
+                document.getElementById('loading').innerHTML = '<p style="color: #DC2626;">Connection error. Please refresh.</p>';
+            }
+        }
+        
+        function displayPrescriptions(prescriptions) {
+            const list = document.getElementById('prescriptionsList');
+            
+            list.innerHTML = prescriptions.map(presc => {
+                const date = new Date(presc.appointment_date);
+                const formattedDate = date.toLocaleDateString('en-IN', { 
+                    weekday: 'short', 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric' 
+                });
+                
+                const timeStr = presc.appointment_time.substring(0, 5);
+                const [hours, minutes] = timeStr.split(':');
+                const hour = parseInt(hours);
+                const ampm = hour >= 12 ? 'PM' : 'AM';
+                const hour12 = hour % 12 || 12;
+                const time12 = `${hour12}:${minutes} ${ampm}`;
+                
+                return `
+                    <div class="prescription-card">
+                        <div class="prescription-header">
+                            <div>
+                                <h3>📋 Prescription</h3>
+                                <div class="prescription-date">${formattedDate} at ${time12}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="prescription-body">
+                            <div class="doctor-info">
+                                <div class="doctor-avatar">
+                                    ${presc.doctor_name.charAt(0)}
+                                </div>
+                                <div class="doctor-details">
+                                    <h4>${presc.doctor_name}</h4>
+                                    <p>${presc.specialization}</p>
+                                </div>
+                            </div>
+                            
+                            ${presc.problem_description ? `
+                                <div class="prescription-section">
+                                    <div class="section-title">🩺 Problem Description</div>
+                                    <div class="section-content">${presc.problem_description}</div>
+                                </div>
+                            ` : ''}
+                            
+                            ${presc.diagnosis ? `
+                                <div class="prescription-section">
+                                    <div class="section-title">🔬 Diagnosis</div>
+                                    <div class="section-content">${presc.diagnosis}</div>
+                                </div>
+                            ` : ''}
+                            
+                            <div class="prescription-section">
+                                <div class="section-title">💊 Medicines</div>
+                                <div class="section-content">${presc.medicines}</div>
+                            </div>
+                            
+                            <div class="prescription-section">
+                                <div class="section-title">📏 Dosage</div>
+                                <div class="section-content">${presc.dosage}</div>
+                            </div>
+                            
+                            ${presc.duration ? `
+                                <div class="prescription-section">
+                                    <div class="section-title">⏱️ Duration</div>
+                                    <div class="section-content">${presc.duration}</div>
+                                </div>
+                            ` : ''}
+                            
+                            ${presc.advice ? `
+                                <div class="prescription-section">
+                                    <div class="section-title">💡 Advice</div>
+                                    <div class="section-content">${presc.advice}</div>
+                                </div>
+                            ` : ''}
+                            
+                            ${presc.remarks ? `
+                                <div class="prescription-section">
+                                    <div class="section-title">📝 Remarks</div>
+                                    <div class="section-content">${presc.remarks}</div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'auth.html';
+        }
+        
+        loadPrescriptions();
+    </script>
+</body>
+</html>

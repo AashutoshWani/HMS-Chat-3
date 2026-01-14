@@ -1,0 +1,540 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Availability - Hospital Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #E0F4FB;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #38BDF8 0%, #0EA5E9 100%);
+            color: #FFFFFF;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(8,145,178,0.3);
+        }
+        
+        .navbar h1 {
+            font-size: 24px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-links a {
+            color: #FFFFFF;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: background 0.3s;
+        }
+        
+        .nav-links a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .page-header h2 {
+            color: #0F172A;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .page-header p {
+            color: #475569;
+            font-size: 16px;
+        }
+        
+        .form-card {
+            background: #FFFFFF;
+            border: 1px solid #A5E4F3;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 12px 30px rgba(8,145,178,0.20);
+            margin-bottom: 20px;
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+        }
+        
+        .form-section h3 {
+            color: #0F172A;
+            margin-bottom: 15px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .day-checkbox {
+            display: none;
+        }
+        
+        .day-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            background: #F8FEFF;
+            border: 2px solid #A5E4F3;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: #475569;
+        }
+        
+        .day-checkbox:checked + .day-label {
+            background: #0EA5E9;
+            color: #FFFFFF;
+            border-color: #0EA5E9;
+        }
+        
+        .time-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .time-input-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        label {
+            color: #0F172A;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        input[type="time"],
+        input[type="number"],
+        select {
+            padding: 12px;
+            border: 2px solid #A5E4F3;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #FFFFFF;
+            color: #0F172A;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="time"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #22D3EE;
+            box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.1);
+        }
+        
+        .slot-duration-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .duration-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        
+        .duration-radio {
+            display: none;
+        }
+        
+        .duration-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            background: #F8FEFF;
+            border: 2px solid #A5E4F3;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: #475569;
+        }
+        
+        .duration-radio:checked + .duration-label {
+            background: #06B6D4;
+            color: #FFFFFF;
+            border-color: #06B6D4;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        button {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-save {
+            background: #0EA5E9;
+            color: #FFFFFF;
+            box-shadow: 0 4px 12px rgba(14,165,233,0.45);
+            flex: 1;
+            max-width: 300px;
+        }
+        
+        .btn-save:hover {
+            background: #0284C7;
+            transform: translateY(-2px);
+        }
+        
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            font-weight: 600;
+        }
+        
+        .message.success {
+            background: #D1FAE5;
+            color: #065F46;
+            border: 1px solid #10B981;
+            display: block;
+        }
+        
+        .message.error {
+            background: #FEE2E2;
+            color: #991B1B;
+            border: 1px solid #DC2626;
+            display: block;
+        }
+        
+        .preview-card {
+            background: #F8FEFF;
+            border: 1px solid #A5E4F3;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .preview-card h4 {
+            color: #0F172A;
+            margin-bottom: 12px;
+        }
+        
+        .preview-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            color: #475569;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .time-inputs {
+                grid-template-columns: 1fr;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .btn-save {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>🏥 Hospital Management</h1>
+        <div class="nav-links">
+           <a href="dashboard.html">Dashboard</a>
+           <a href="doctor-availability.html">My Availability</a>
+           <a href="doctor-appointments.html">My Appointments</a>
+           <a href="write-prescription.html">Write Prescription</a>
+           <a href="#" onclick="logout()">Logout</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="page-header">
+            <h2>⏰ Set Your Availability</h2>
+            <p>Tell patients when you are available for appointments</p>
+        </div>
+        
+        <div id="message" class="message"></div>
+        
+        <div class="form-card">
+            <form onsubmit="saveAvailability(event)">
+                <!-- Available Days Section -->
+                <div class="form-section">
+                    <h3>📅 Available Days</h3>
+                    <div class="days-grid">
+                        <input type="checkbox" id="day-Monday" class="day-checkbox" value="Monday">
+                        <label for="day-Monday" class="day-label">Monday</label>
+                        
+                        <input type="checkbox" id="day-Tuesday" class="day-checkbox" value="Tuesday">
+                        <label for="day-Tuesday" class="day-label">Tuesday</label>
+                        
+                        <input type="checkbox" id="day-Wednesday" class="day-checkbox" value="Wednesday">
+                        <label for="day-Wednesday" class="day-label">Wednesday</label>
+                        
+                        <input type="checkbox" id="day-Thursday" class="day-checkbox" value="Thursday">
+                        <label for="day-Thursday" class="day-label">Thursday</label>
+                        
+                        <input type="checkbox" id="day-Friday" class="day-checkbox" value="Friday">
+                        <label for="day-Friday" class="day-label">Friday</label>
+                        
+                        <input type="checkbox" id="day-Saturday" class="day-checkbox" value="Saturday">
+                        <label for="day-Saturday" class="day-label">Saturday</label>
+                        
+                        <input type="checkbox" id="day-Sunday" class="day-checkbox" value="Sunday">
+                        <label for="day-Sunday" class="day-label">Sunday</label>
+                    </div>
+                </div>
+                
+                <!-- Time Range Section -->
+                <div class="form-section">
+                    <h3>🕐 Working Hours</h3>
+                    <div class="time-inputs">
+                        <div class="time-input-group">
+                            <label for="startTime">Start Time</label>
+                            <input type="time" id="startTime" required value="09:00" onchange="updatePreview()">
+                            <small id="startTimeDisplay" style="color: #06B6D4; font-weight: 600; margin-top: 5px;">9:00 AM</small>
+                        </div>
+                        <div class="time-input-group">
+                            <label for="endTime">End Time</label>
+                            <input type="time" id="endTime" required value="17:00" onchange="updatePreview()">
+                            <small id="endTimeDisplay" style="color: #06B6D4; font-weight: 600; margin-top: 5px;">5:00 PM</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Slot Duration Section -->
+                <div class="form-section">
+                    <h3>⏱️ Appointment Duration</h3>
+                    <div class="duration-options">
+                        <input type="radio" id="duration-30" class="duration-radio" name="slotDuration" value="30" checked>
+                        <label for="duration-30" class="duration-label">30 min</label>
+                    </div>
+                </div>
+                
+                <!-- Preview -->
+                <div class="preview-card">
+                    <h4>✅ Preview</h4>
+                    <div class="preview-item">
+                        <span>Available Days:</span>
+                        <span id="previewDays">None selected</span>
+                    </div>
+                    <div class="preview-item">
+                        <span>Working Hours:</span>
+                        <span id="previewHours">09:00 - 17:00</span>
+                    </div>
+                    <div class="preview-item">
+                        <span>Slot Duration:</span>
+                        <span id="previewDuration">30 minutes</span>
+                    </div>
+                </div>
+                
+                <div class="button-group">
+                    <button type="submit" class="btn-save">💾 Save Availability</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user'));
+            
+            if (!token || !user || user.role !== 'doctor') {
+                window.location.href = 'auth.html';
+                return false;
+            }
+            return true;
+        }
+        
+        function showMessage(message, type) {
+            const msgEl = document.getElementById('message');
+            msgEl.textContent = message;
+            msgEl.className = `message ${type}`;
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    msgEl.className = 'message';
+                }, 4000);
+            }
+        }
+        
+        function updatePreview() {
+            const selectedDays = Array.from(document.querySelectorAll('.day-checkbox:checked'))
+                .map(cb => cb.value);
+            document.getElementById('previewDays').textContent = 
+                selectedDays.length > 0 ? selectedDays.join(', ') : 'None selected';
+            
+            const startTime = document.getElementById('startTime').value;
+            const endTime = document.getElementById('endTime').value;
+            
+            // Convert to 12-hour format
+            const start12 = convertTo12Hour(startTime);
+            const end12 = convertTo12Hour(endTime);
+            
+            document.getElementById('startTimeDisplay').textContent = start12;
+            document.getElementById('endTimeDisplay').textContent = end12;
+            document.getElementById('previewHours').textContent = `${start12} - ${end12}`;
+            
+            const duration = document.querySelector('input[name="slotDuration"]:checked').value;
+            document.getElementById('previewDuration').textContent = `${duration} minutes`;
+        }
+        
+        function convertTo12Hour(time24) {
+            const [hours, minutes] = time24.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const hour12 = hour % 12 || 12;
+            return `${hour12}:${minutes} ${ampm}`;
+        }
+        
+        document.querySelectorAll('.day-checkbox, input[type="time"], input[name="slotDuration"]').forEach(el => {
+            el.addEventListener('change', updatePreview);
+        });
+        
+        async function saveAvailability(event) {
+            event.preventDefault();
+            
+            if (!checkAuth()) return;
+            
+            const selectedDays = Array.from(document.querySelectorAll('.day-checkbox:checked'))
+                .map(cb => cb.value);
+            
+            if (selectedDays.length === 0) {
+                showMessage('❌ Please select at least one day', 'error');
+                return;
+            }
+            
+            const startTime = document.getElementById('startTime').value + ':00';
+            const endTime = document.getElementById('endTime').value + ':00';
+            const slotDuration = parseInt(document.querySelector('input[name="slotDuration"]:checked').value);
+            
+            const token = localStorage.getItem('token');
+            
+            try {
+                const response = await fetch(`${API_URL}/doctor/availability`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        available_days: selectedDays,
+                        start_time: startTime,
+                        end_time: endTime,
+                        slot_duration: slotDuration
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showMessage('✅ ' + data.message, 'success');
+                } else {
+                    showMessage('❌ ' + data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Save availability error:', error);
+                showMessage('❌ Connection error. Is the server running?', 'error');
+            }
+        }
+        
+        async function loadAvailability() {
+            if (!checkAuth()) return;
+            
+            const token = localStorage.getItem('token');
+            
+            try {
+                const response = await fetch(`${API_URL}/doctor/availability`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.availability) {
+                    const avail = data.availability;
+                    
+                    const days = JSON.parse(avail.available_days || '[]');
+                    days.forEach(day => {
+                        const checkbox = document.getElementById(`day-${day}`);
+                        if (checkbox) checkbox.checked = true;
+                    });
+                    
+                    if (avail.start_time) {
+                        document.getElementById('startTime').value = avail.start_time.substring(0, 5);
+                    }
+                    if (avail.end_time) {
+                        document.getElementById('endTime').value = avail.end_time.substring(0, 5);
+                    }
+                    
+                    const durationRadio = document.getElementById(`duration-${avail.slot_duration}`);
+                    if (durationRadio) durationRadio.checked = true;
+                    
+                    updatePreview();
+                }
+            } catch (error) {
+                console.error('Load availability error:', error);
+            }
+        }
+        
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'auth.html';
+        }
+        
+        loadAvailability();
+    </script>
+</body>
+</html>

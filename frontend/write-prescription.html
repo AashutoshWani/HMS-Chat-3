@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Write Prescription - Doctor Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #E0F4FB;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #38BDF8 0%, #0EA5E9 100%);
+            color: #FFFFFF;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(8,145,178,0.3);
+        }
+        
+        .navbar h1 {
+            font-size: 24px;
+        }
+        
+        .nav-right {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .nav-right a {
+            color: #FFFFFF;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: background 0.3s;
+        }
+        
+        .nav-right a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .navbar button {
+            background: rgba(255,255,255,0.2);
+            color: #FFFFFF;
+            border: 2px solid #FFFFFF;
+            padding: 10px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .navbar button:hover {
+            background: #FFFFFF;
+            color: #0EA5E9;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .page-header h2 {
+            color: #0F172A;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .page-header p {
+            color: #475569;
+        }
+        
+        .form-card {
+            background: #FFFFFF;
+            border: 1px solid #A5E4F3;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 12px 30px rgba(8,145,178,0.20);
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #0F172A;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .required {
+            color: #DC2626;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #A5E4F3;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border 0.3s;
+            background: #FFFFFF;
+            color: #0F172A;
+            font-family: inherit;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #22D3EE;
+            box-shadow: 0 0 0 1px #A5E4F3;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: #0EA5E9;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(14,165,233,0.45);
+        }
+        
+        .submit-btn:hover {
+            background: #0284C7;
+            transform: translateY(-2px);
+        }
+        
+        .submit-btn:disabled {
+            background: #94A3B8;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 14px;
+        }
+        
+        .message.success {
+            background: #D1FAE5;
+            color: #065F46;
+            border: 1px solid #10B981;
+        }
+        
+        .message.error {
+            background: #FEE2E2;
+            color: #991B1B;
+            border: 1px solid #DC2626;
+        }
+        
+        .patient-info {
+            background: #F8FEFF;
+            border: 1px solid #A5E4F3;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .patient-info h3 {
+            color: #0F172A;
+            margin-bottom: 15px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+        }
+        
+        .info-label {
+            color: #475569;
+            font-weight: 600;
+        }
+        
+        .info-value {
+            color: #0F172A;
+        }
+        
+        .helper-text {
+            font-size: 13px;
+            color: #475569;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>🏥 Hospital Management System</h1>
+        <div class="nav-right">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="doctor-availability.html">My Availability</a>
+            <a href="doctor-appointments.html">My Appointments</a>
+            <a href="write-prescription.html">Write Prescription</a>
+            <button onclick="logout()">Logout</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="page-header">
+            <h2>📝 Write Prescription</h2>
+            <p>Create medical prescription for your patient</p>
+        </div>
+        
+        <div class="form-card">
+            <div id="message" class="message"></div>
+            
+            <div class="form-group">
+                <label for="appointmentSelect">Select Completed Appointment <span class="required">*</span></label>
+                <select id="appointmentSelect" required onchange="loadPatientInfo()">
+                    <option value="">-- Select Appointment --</option>
+                </select>
+                <div class="helper-text">Select from your completed appointments</div>
+            </div>
+            
+            <div id="patientInfo" class="patient-info" style="display: none;">
+                <h3>👤 Patient Information</h3>
+                <div class="info-row">
+                    <span class="info-label">Patient Name:</span>
+                    <span class="info-value" id="patientName"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Appointment Date:</span>
+                    <span class="info-value" id="appointmentDate"></span>
+                </div>
+            </div>
+            
+            <form id="prescriptionForm" onsubmit="handleSubmit(event)">
+                <div class="form-group">
+                    <label for="problemDescription">🩺 Problem Description <span class="required">*</span></label>
+                    <textarea id="problemDescription" required placeholder="Describe the patient's symptoms and complaints"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="diagnosis">🔬 Diagnosis <span class="required">*</span></label>
+                    <textarea id="diagnosis" required placeholder="Your medical diagnosis"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="medicines">💊 Medicines <span class="required">*</span></label>
+                    <textarea id="medicines" required placeholder="List all prescribed medicines (one per line)"></textarea>
+                    <div class="helper-text">Example: Paracetamol 500mg, Amoxicillin 250mg</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="dosage">📏 Dosage <span class="required">*</span></label>
+                    <textarea id="dosage" required placeholder="Specify dosage for each medicine"></textarea>
+                    <div class="helper-text">Example: 1-0-1 (Morning-Afternoon-Night), After meals</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="duration">⏱️ Duration</label>
+                    <input type="text" id="duration" placeholder="e.g., 7 days, 2 weeks, 1 month">
+                </div>
+                
+                <div class="form-group">
+                    <label for="advice">💡 Advice</label>
+                    <textarea id="advice" placeholder="General health advice, precautions, lifestyle changes"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="remarks">📝 Additional Remarks</label>
+                    <textarea id="remarks" placeholder="Any additional notes or follow-up instructions"></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn">
+                    ✅ Save Prescription
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Add this script to your HTML files to debug connection issues
+// Put this at the very top of your <script> section
+
+console.log('🔍 Starting connection diagnostics...');
+
+const API_URL = 'http://localhost:5000/api';
+
+// Test 1: Check if API is reachable
+async function testConnection() {
+    console.log('📡 Testing API connection to:', API_URL);
+    
+    try {
+        const response = await fetch(`${API_URL}/test`);
+        const data = await response.json();
+        console.log('✅ API Connection: SUCCESS');
+        console.log('Response:', data);
+        return true;
+    } catch (error) {
+        console.error('❌ API Connection: FAILED');
+        console.error('Error:', error.message);
+        return false;
+    }
+}
+
+// Test 2: Check localStorage
+function checkLocalStorage() {
+    console.log('📦 Checking localStorage...');
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    
+    if (token) {
+        console.log('✅ Token found:', token.substring(0, 20) + '...');
+    } else {
+        console.log('❌ No token found');
+    }
+    
+    if (user) {
+        console.log('✅ User data found:', JSON.parse(user));
+    } else {
+        console.log('❌ No user data found');
+    }
+}
+
+// Test 3: Test loading doctors
+async function testLoadDoctors() {
+    console.log('👨‍⚕️ Testing doctor loading...');
+    
+    try {
+        const response = await fetch(`${API_URL}/doctors`);
+        const data = await response.json();
+        
+        if (data.success) {
+            console.log('✅ Doctors loaded:', data.doctors.length, 'doctors found');
+            data.doctors.forEach(doc => {
+                console.log(`   - ${doc.name} (${doc.specialization})`);
+            });
+            return true;
+        } else {
+            console.error('❌ Failed to load doctors:', data.message);
+            return false;
+        }
+    } catch (error) {
+        console.error('❌ Error loading doctors:', error.message);
+        return false;
+    }
+}
+
+// Test 4: Check authentication
+async function testAuth() {
+    console.log('🔐 Testing authentication...');
+    
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    
+    if (!token || !user) {
+        console.error('❌ Not logged in');
+        return false;
+    }
+    
+    try {
+        const response = await fetch(`${API_URL}/dashboard`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            console.log('✅ Authentication: SUCCESS');
+            console.log('User:', user.name, `(${user.role})`);
+            return true;
+        } else {
+            console.error('❌ Authentication failed:', data.message);
+            return false;
+        }
+    } catch (error) {
+        console.error('❌ Auth check error:', error.message);
+        return false;
+    }
+}
+
+// Run all tests
+async function runDiagnostics() {
+    console.log('═══════════════════════════════════════');
+    console.log('🚀 RUNNING CONNECTION DIAGNOSTICS');
+    console.log('═══════════════════════════════════════');
+    
+    checkLocalStorage();
+    console.log('---');
+    
+    const apiOk = await testConnection();
+    console.log('---');
+    
+    if (apiOk) {
+        await testLoadDoctors();
+        console.log('---');
+        await testAuth();
+    }
+    
+    console.log('═══════════════════════════════════════');
+    console.log('📋 DIAGNOSTICS COMPLETE');
+    console.log('═══════════════════════════════════════');
+}
+
+// Run diagnostics when page loads
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', runDiagnostics);
+} else {
+    runDiagnostics();
+}
+        let completedAppointments = [];
+        
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user'));
+            
+            if (!token || !user || user.role !== 'doctor') {
+                alert('Access denied. Doctors only.');
+                window.location.href = 'auth.html';
+                return false;
+            }
+            return true;
+        }
+        
+        function showMessage(message, type) {
+            const msgElement = document.getElementById('message');
+            msgElement.textContent = message;
+            msgElement.className = `message ${type}`;
+            msgElement.style.display = 'block';
+            
+            setTimeout(() => {
+                msgElement.style.display = 'none';
+            }, 5000);
+        }
+        
+        async function loadCompletedAppointments() {
+            // Mock data - In production, fetch from: GET /api/doctor/completed-appointments
+            completedAppointments = [
+                {
+                    id: 4,
+                    patient_name: 'Alice Brown',
+                    date: '2026-01-05',
+                    time: '09:00 AM',
+                    status: 'completed'
+                }
+            ];
+            
+            const select = document.getElementById('appointmentSelect');
+            select.innerHTML = '<option value="">-- Select Appointment --</option>' + 
+                completedAppointments.map(apt => `
+                    <option value="${apt.id}">${apt.patient_name} - ${apt.date} at ${apt.time}</option>
+                `).join('');
+        }
+        
+        function loadPatientInfo() {
+            const appointmentId = document.getElementById('appointmentSelect').value;
+            
+            if (!appointmentId) {
+                document.getElementById('patientInfo').style.display = 'none';
+                return;
+            }
+            
+            const appointment = completedAppointments.find(a => a.id == appointmentId);
+            
+            if (appointment) {
+                document.getElementById('patientName').textContent = appointment.patient_name;
+                document.getElementById('appointmentDate').textContent = `${appointment.date} at ${appointment.time}`;
+                document.getElementById('patientInfo').style.display = 'block';
+            }
+        }
+        
+        async function handleSubmit(event) {
+            event.preventDefault();
+            
+            const appointmentId = document.getElementById('appointmentSelect').value;
+            
+            if (!appointmentId) {
+                showMessage('Please select an appointment', 'error');
+                return;
+            }
+            
+            const token = localStorage.getItem('token');
+            
+            const prescriptionData = {
+                appointmentId: parseInt(appointmentId),
+                problemDescription: document.getElementById('problemDescription').value,
+                diagnosis: document.getElementById('diagnosis').value,
+                medicines: document.getElementById('medicines').value,
+                dosage: document.getElementById('dosage').value,
+                duration: document.getElementById('duration').value,
+                advice: document.getElementById('advice').value,
+                remarks: document.getElementById('remarks').value
+            };
+            
+            try {
+                const response = await fetch(`${API_URL}/prescriptions/create`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(prescriptionData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showMessage('✅ Prescription saved successfully!', 'success');
+                    event.target.reset();
+                    document.getElementById('patientInfo').style.display = 'none';
+                    loadCompletedAppointments();
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Create prescription error:', error);
+                showMessage('Connection error. Please try again.', 'error');
+            }
+        }
+        
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'auth.html';
+        }
+        
+        if (checkAuth()) {
+            loadCompletedAppointments();
+        }
+    </script>
+</body>
+</html>
